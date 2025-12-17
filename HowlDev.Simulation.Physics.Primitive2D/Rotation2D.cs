@@ -77,7 +77,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// Constructor takes in a <c>Rotation</c> object and duplicates it.
     /// </summary>
     public Rotation2D(Rotation2D value) {
-        rotationAngle = value.RotationAngle;
+        RotationAngle = value.RotationAngle;
     }
     #endregion
     #region Methods
@@ -187,7 +187,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// <param name="absValue">Set to <c>True</c> to return the absolute value of the distance</param>
     /// <returns></returns>
     public double DistanceTo(double angle, bool absValue = true) {
-        double[] distances = { angle - (rotationAngle + 360), angle + 360 - rotationAngle, angle - rotationAngle };
+        double[] distances = [angle - (rotationAngle + 360), angle + 360 - rotationAngle, angle - rotationAngle];
         Array.Sort(distances, (a, b) => {
             if (Math.Abs(a) == Math.Abs(b)) return 0;
             if (Math.Abs(a) < Math.Abs(b)) return -1;
@@ -228,7 +228,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
 
         if (diff > 180 || diff < 0) { distance *= -1; }
 
-        distance = distance * percent;
+        distance *= percent;
         AdjustBy(distance);
     }
 
@@ -282,6 +282,13 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
         double value = Math.Atan2(y, x) / Math.PI * 180;
         if (value < 0) { value += 360; }
         return Math.Round(value, 2);
+    }
+
+    /// <summary>
+    /// Static method to return the angle to a point in space. 
+    /// </summary>
+    public static double AngleOf(Point2D point) {
+        return AngleOf(point.X, point.Y);
     }
     #endregion
     #region Operators
@@ -352,8 +359,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// </summary>
     /// <returns>Adjusted left object</returns>
     public static Rotation2D operator +(Rotation2D left, Rotation2D right) {
-        left.AdjustBy(right.RotationAngle);
-        return new Rotation2D(left);
+        return new Rotation2D(left.RotationAngle + right.RotationAngle);
     }
 
     /// <summary>
@@ -361,8 +367,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// </summary>
     /// <returns>Adjusted left object.</returns>
     public static Rotation2D operator -(Rotation2D left, Rotation2D right) {
-        left.AdjustBy(-right.RotationAngle);
-        return new Rotation2D(left);
+        return new Rotation2D(left.RotationAngle - right.RotationAngle);
     }
 
     /// <summary>
@@ -488,8 +493,14 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// Used to define the coordinates each time the rotation is adjusted. 
     /// </summary>
     private void AssignCoords() {
-        xCoord = Math.Round(Math.Cos(RotationRadian), 2);
-        yCoord = Math.Round(Math.Sin(RotationRadian), 2);
+        (double Sin, double Cos) = GetCoordinates(RotationRadian);
+        xCoord = Math.Round(Cos, 2);
+        yCoord = Math.Round(Sin, 2);
+    }
+
+    private static (double Sin, double Cos) GetCoordinates(double radian) {
+        // I can dictionary this later
+        return Math.SinCos(radian);
     }
     #endregion
 }
