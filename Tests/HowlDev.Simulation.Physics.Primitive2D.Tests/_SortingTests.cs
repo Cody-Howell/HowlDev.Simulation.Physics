@@ -3,7 +3,7 @@ namespace HowlDev.Simulation.Physics.Primitive2D.Tests;
 public class RotationClassSorting {
     [Test]
     public async Task RotationClassSortsCorrectly() {
-        Rotation2D[] rotations = {
+        Rotation2D[] rotations = [
             new Rotation2D(112),
             new Rotation2D(284),
             new Rotation2D(315),
@@ -26,11 +26,11 @@ public class RotationClassSorting {
             new Rotation2D(100),
             new Rotation2D(0),
             new Rotation2D(360)
-        };
+        ];
 
         Array.Sort(rotations);
 
-        Rotation2D[] answer = {
+        Rotation2D[] answer = [
             new Rotation2D(0),
             new Rotation2D(360),
             new Rotation2D(29),
@@ -53,7 +53,7 @@ public class RotationClassSorting {
             new Rotation2D(315),
             new Rotation2D(316),
             new Rotation2D(335)
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(rotations[i]).IsEqualTo(answer[i]);
@@ -63,7 +63,7 @@ public class RotationClassSorting {
 public class PointClassSorting {
     [Test]
     public async Task IntegerPointClassSorting() {
-        Point2D[] points = {
+        Point2D[] points = [
             new Point2D(6, 7),
             new Point2D(8, 5),
             new Point2D(-2, 5),
@@ -94,11 +94,11 @@ public class PointClassSorting {
             new Point2D(-8, 4),
             new Point2D(7, 3),
             new Point2D(3, -3)
-        };
+        ];
 
         Array.Sort(points);
 
-        Point2D[] answer = {
+        Point2D[] answer = [
             new Point2D(-10, 3),
             new Point2D(-9, 1),
             new Point2D(-9, 5),
@@ -129,7 +129,7 @@ public class PointClassSorting {
             new Point2D(9, -2),
             new Point2D(9, 0),
             new Point2D(9, 3)
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(points[i]).IsEqualTo(answer[i]);
@@ -138,7 +138,7 @@ public class PointClassSorting {
 
     [Test]
     public async Task DoublePointClassSorting() {
-        Point2D[] points = {
+        Point2D[] points = [
             new Point2D(-7.15, 6.17),
             new Point2D(9.31, 8.98),
             new Point2D(7.31, 1.23),
@@ -159,11 +159,11 @@ public class PointClassSorting {
             new Point2D(-9.53, 1.88),
             new Point2D(4.32, -5.7),
             new Point2D(7.13, -5.43)
-        };
+        ];
 
         Array.Sort(points);
 
-        Point2D[] answer = {
+        Point2D[] answer = [
             new Point2D(-9.53, 1.88),
             new Point2D(-8.76, 7.76),
             new Point2D(-8.02, 7.71),
@@ -184,7 +184,7 @@ public class PointClassSorting {
             new Point2D(8.27, 5.81),
             new Point2D(9.02, -5.67),
             new Point2D(9.31, 8.98),
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(points[i]).IsEqualTo(answer[i]);
@@ -194,7 +194,7 @@ public class PointClassSorting {
 public class EquationSorting {
     [Test]
     public async Task IntegerEquationSorting() {
-        Equation2D[] equations = {
+        Equation2D[] equations = [
             new Equation2D(4, -6),
             new Equation2D(5, -5),
             new Equation2D(6, -10),
@@ -225,11 +225,11 @@ public class EquationSorting {
             new Equation2D(9, 7),
             new Equation2D(-1, 1),
             new Equation2D(8, -8)
-        };
+        ];
 
         Array.Sort(equations);
 
-        Equation2D[] answer = {
+        Equation2D[] answer = [
             new Equation2D(-10, -10),
             new Equation2D(-9, -9),
             new Equation2D(-9, -8),
@@ -260,7 +260,7 @@ public class EquationSorting {
             new Equation2D(9, -9),
             new Equation2D(9, -8),
             new Equation2D(9, 7)
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(equations[i]).IsEqualTo(answer[i]);
@@ -269,7 +269,7 @@ public class EquationSorting {
 
     [Test]
     public async Task DoubleEquationSorting() {
-        Equation2D[] equations = {
+        Equation2D[] equations = [
             new Equation2D(-7.15, -0.28),
             new Equation2D(-4.22, 2.44),
             new Equation2D(9.04, -8.65),
@@ -290,11 +290,11 @@ public class EquationSorting {
             new Equation2D(-7.82, 2.09),
             new Equation2D(2.15, 6.67),
             new Equation2D(4.82, -8.54)
-        };
+        ];
 
         Array.Sort(equations);
 
-        Equation2D[] answer = {
+        Equation2D[] answer = [
             new Equation2D(-9.82, 0.6),
             new Equation2D(-9.51, 3.29),
             new Equation2D(-7.82, 2.09),
@@ -315,7 +315,7 @@ public class EquationSorting {
             new Equation2D(8.95, -2.48),
             new Equation2D(9.04, -8.65),
             new Equation2D(9.25, 3.71),
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(equations[i]).IsEqualTo(answer[i]);
@@ -401,7 +401,7 @@ public class EquationSorting {
 public class VectorSorting {
     [Test]
     public async Task FullSorting() {
-        Vector2D[] momentum = {
+        Vector2D[] momentum = [
             new Vector2D(295, 0.63),
             new Vector2D(210, 3.38),
             new Vector2D(275, 3.16),
@@ -422,11 +422,11 @@ public class VectorSorting {
             new Vector2D(314, 3.78),
             new Vector2D(358, 0.17),
             new Vector2D(272, 0.55)
-        };
+        ];
 
         Array.Sort(momentum);
 
-        Vector2D[] answer = {
+        Vector2D[] answer = [
             new Vector2D(358, 0.17),
             new Vector2D(258, 0.38),
             new Vector2D(344, 0.43),
@@ -447,7 +447,7 @@ public class VectorSorting {
             new Vector2D(46, 3.64),
             new Vector2D(314, 3.78),
             new Vector2D(254, 3.95),
-        };
+        ];
 
         for (int i = 0; i < answer.Length; i++) {
             await Assert.That(momentum[i]).IsEqualTo(answer[i]);

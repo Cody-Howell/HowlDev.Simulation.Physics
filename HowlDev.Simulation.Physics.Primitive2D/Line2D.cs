@@ -329,7 +329,7 @@ public readonly struct Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumer
     /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.Equals"]/*'/> <see cref="Equals(Line2D)"/>.
     /// </summary>
     public override bool Equals(object? obj) {
-        return base.Equals(obj);
+        return obj is Line2D other && Equals(other);
     }
 
     /// <summary>

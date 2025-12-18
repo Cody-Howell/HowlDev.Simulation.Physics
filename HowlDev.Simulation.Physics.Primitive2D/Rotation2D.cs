@@ -300,8 +300,7 @@ public readonly struct Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation
     /// <summary>
     /// In-place mutation. For performance benefits only if needed. 
     /// </summary>
-    public static void RotateBy(ref Rotation2D rotation, double delta)
-    {
+    public static void RotateBy(ref Rotation2D rotation, double delta) {
         rotation = new Rotation2D(rotation.RotationAngle + delta);
     }
     #endregion
@@ -513,13 +512,13 @@ public readonly struct Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation
             incomingValue += 360;
         }
         double normalizedAngle = Math.Round(incomingValue % 360, 2);
-        
+
         // Calculate radian and coordinates
         double radian = Math.PI / 180 * normalizedAngle;
         (double Sin, double Cos) = Math.SinCos(radian);
         double x = Math.Round(Cos, 2);
         double y = Math.Round(Sin, 2);
-        
+
         return (normalizedAngle, x, y);
     }
 

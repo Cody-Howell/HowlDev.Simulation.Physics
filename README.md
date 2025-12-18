@@ -24,6 +24,10 @@ Holds two coefficient values (for the slope and the y-intercept). Does most of t
 
 Holds two Point2D objects in an array. Has logic for intersecting lines and retrieving intersecting points. 
 
+### Circle2D
+
+Holding a center Point2D and a radius, has methods for intersection with other circles and points. 
+
 Read the wiki (which has links to the package) and get a bunch of class definitions! [Those exist here](https://wiki.codyhowell.dev/2dphysicslibrary).
 
 # Changelog
@@ -33,6 +37,7 @@ Read the wiki (which has links to the package) and get a bunch of class definiti
 - BREAKING CHANGE
     - Changed Rotation, Point, Vector, Line, and Equation to Value types (structs) because I was foolish and it's what I should have done in the first place. 
         - I do kinda dislike how the API turned out, but I kept all the methods I wanted to, so...
+- Created Circle2D struct
 
 0.7.5 (12/17/25)
 
