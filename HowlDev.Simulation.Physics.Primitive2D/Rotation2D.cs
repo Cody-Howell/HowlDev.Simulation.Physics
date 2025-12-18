@@ -6,36 +6,16 @@
 /// recalculates unit coordinates every time the value is updated for faster and less costly 
 /// retreival. It implements the IEquatable and IComparable interfaces.
 /// </summary>
-public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
-    private double rotationAngle;
-    private double xCoord;
-    private double yCoord;
+public readonly struct Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
+    private readonly double rotationAngle;
+    private readonly double xCoord;
+    private readonly double yCoord;
 
     #region Properties
     /// <value>
-    /// On set, ensures the valid range is between 0 and 359.
+    /// Gets the rotation angle. Always between 0 and 359.99.
     /// </value>
-    public double RotationAngle {
-        get { return rotationAngle; }
-        set {
-            double incomingValue = value;
-            while (incomingValue < 0) {
-                incomingValue += 360;
-            }
-            rotationAngle = Math.Round(incomingValue % 360, 2);
-            AssignCoords();
-        }
-    }
-
-    // Used for some inner math. Result of legacy code. 
-    private double RotationRadian {
-        get {
-            return Math.PI / 180 * rotationAngle;
-        }
-        set {
-            RotationAngle = value / Math.PI * 180;
-        }
-    }
+    public double RotationAngle => rotationAngle;
 
     /// <value>
     /// Gets the X coordinate of the angle on a unit circle (as a radius 
@@ -63,21 +43,21 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// Default constructor assigns angle to 0.
     /// </summary>
     public Rotation2D() {
-        rotationAngle = 0;
+        (rotationAngle, xCoord, yCoord) = CalculateRotationData(0);
     }
 
     /// <summary>
     /// Constructor assigns angle to the input angle.
     /// </summary>
     public Rotation2D(double angle) {
-        RotationAngle = angle; // Purposefully calls Property logic
+        (rotationAngle, xCoord, yCoord) = CalculateRotationData(angle);
     }
 
     /// <summary>
     /// Constructor takes in a <c>Rotation</c> object and duplicates it.
     /// </summary>
     public Rotation2D(Rotation2D value) {
-        RotationAngle = value.RotationAngle;
+        (rotationAngle, xCoord, yCoord) = (value.rotationAngle, value.xCoord, value.yCoord);
     }
     #endregion
     #region Methods
@@ -86,98 +66,113 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// the bounds of 0 - 359.
     /// </summary>
     /// <param name="angleDifference">Positive or negative int to adjust the current angle by</param>
-    public void AdjustBy(double angleDifference) {
-        RotationAngle += angleDifference;
+    /// <returns>A new Rotation2D with the adjusted angle</returns>
+    public Rotation2D AdjustBy(double angleDifference) {
+        return new Rotation2D(rotationAngle + angleDifference);
     }
 
     /// <summary>
     /// Takes in a pair of coordinates from origin (so convert them to that beforehand or use the other method) 
-    /// and assigns the class's rotation to that value. 
+    /// and returns a rotation with that angle value. 
     /// </summary>
-    public void AssignToCoordinates(double x, double y) {
-        RotationRadian = Math.Atan2(y, x);
+    /// <returns>A new Rotation2D with the angle to the coordinates</returns>
+    public static Rotation2D FromCoordinates(double x, double y) {
+        double radian = Math.Atan2(y, x);
+        return FromRadian(radian);
     }
 
     /// <summary>
-    /// Assigns the class's rotation value to the angle from the first point to the second point.
-    /// See also: <seealso cref="AssignToCoordinates(double, double)"/>
+    /// Returns a rotation with the angle from the first point to the second point.
+    /// See also: <seealso cref="FromCoordinates(double, double)"/>
     /// </summary>
     /// <param name="x1">Current X position</param>
     /// <param name="y1">Current Y position</param>
     /// <param name="x2">Target X position</param>
     /// <param name="y2">Target Y position</param>
-    public void AssignToCoordinates(double x1, double y1, double x2, double y2) {
-        AssignToCoordinates(x2 - x1, y2 - y1);
+    /// <returns>A new Rotation2D with the angle from point 1 to point 2</returns>
+    public static Rotation2D FromCoordinates(double x1, double y1, double x2, double y2) {
+        return FromCoordinates(x2 - x1, y2 - y1);
     }
 
     /// <summary>
-    /// Takes in a pair of tuples and assigns their coordinates to those points, using an overload
+    /// Takes in a pair of tuples and returns a rotation with the angle to those points, using an overload
     /// of this method. 
-    /// See also: <seealso cref="AssignToCoordinates(double, double)"/>
+    /// See also: <seealso cref="FromCoordinates(double, double)"/>
     /// </summary>
-    public void AssignToCoordinates((double, double) point1, (double, double) point2) {
-        AssignToCoordinates(point1.Item1, point1.Item2, point2.Item1, point2.Item2);
+    /// <returns>A new Rotation2D with the angle between the points</returns>
+    public static Rotation2D FromCoordinates((double, double) point1, (double, double) point2) {
+        return FromCoordinates(point1.Item1, point1.Item2, point2.Item1, point2.Item2);
     }
 
     /// <summary>
     /// Point passthrough for the rotation from the origin.
     /// </summary>
-    public void AssignToCoordinates(Point2D p) {
-        AssignToCoordinates(p.X, p.Y);
+    /// <returns>A new Rotation2D with the angle to the point</returns>
+    public static Rotation2D FromCoordinates(Point2D p) {
+        return FromCoordinates(p.X, p.Y);
     }
 
     /// <summary>
     /// Two-Point passthrough for the rotation from the first point. 
-    /// See <see cref="AssignToCoordinates(double, double, double, double)"/>.
+    /// See <see cref="FromCoordinates(double, double, double, double)"/>.
     /// </summary>
     /// <param name="p1">Current Point</param>
     /// <param name="p2">Target Point</param>
-    public void AssignToCoordinates(Point2D p1, Point2D p2) {
-        AssignToCoordinates(p1.X, p1.Y, p2.X, p2.Y);
+    /// <returns>A new Rotation2D with the angle from p1 to p2</returns>
+    public static Rotation2D FromCoordinates(Point2D p1, Point2D p2) {
+        return FromCoordinates(p1.X, p1.Y, p2.X, p2.Y);
     }
 
     /// <summary>
-    /// Line passthrough for assign to coordinates. 
+    /// Line passthrough for creating rotation from coordinates. 
     /// </summary>
-    public void AssignToCoordinates(Line2D l1) {
-        AssignToCoordinates(l1[0].X, l1[0].Y, l1[1].X, l1[1].Y);
+    /// <returns>A new Rotation2D with the angle of the line</returns>
+    public static Rotation2D FromCoordinates(Line2D l1) {
+        return FromCoordinates(l1[0].X, l1[0].Y, l1[1].X, l1[1].Y);
     }
 
     /// <summary>
     /// Flips the angle on the X axis.
     /// </summary>
-    public void FlipX() {
+    /// <returns>A new Rotation2D flipped on the X axis</returns>
+    public Rotation2D FlipX() {
+        double newAngle;
         if (rotationAngle < 90) {
-            RotationAngle = 360 - rotationAngle;
+            newAngle = 360 - rotationAngle;
         } else if (rotationAngle < 180) {
-            RotationAngle = 180 + (180 - rotationAngle);
+            newAngle = 180 + (180 - rotationAngle);
         } else if (rotationAngle < 270) {
-            RotationAngle = 180 - (rotationAngle - 180);
+            newAngle = 180 - (rotationAngle - 180);
         } else {
-            RotationAngle = 360 - rotationAngle;
+            newAngle = 360 - rotationAngle;
         }
+        return new Rotation2D(newAngle);
     }
 
     /// <summary>
     /// Flips the angle on the Y axis.
     /// </summary>
-    public void FlipY() {
+    /// <returns>A new Rotation2D flipped on the Y axis</returns>
+    public Rotation2D FlipY() {
+        double newAngle;
         if (rotationAngle < 90) {
-            RotationAngle = 90 + (90 - rotationAngle);
+            newAngle = 90 + (90 - rotationAngle);
         } else if (rotationAngle < 180) {
-            RotationAngle = 180 - rotationAngle;
+            newAngle = 180 - rotationAngle;
         } else if (rotationAngle < 270) {
-            RotationAngle = 270 + (270 - rotationAngle);
+            newAngle = 270 + (270 - rotationAngle);
         } else {
-            RotationAngle = 270 - (rotationAngle - 270);
+            newAngle = 270 - (rotationAngle - 270);
         }
+        return new Rotation2D(newAngle);
     }
 
     /// <summary>
     /// Flips the angle on both axes.
     /// </summary>
-    public void DoubleFlip() {
-        RotationAngle -= 180;
+    /// <returns>A new Rotation2D flipped on both axes</returns>
+    public Rotation2D DoubleFlip() {
+        return new Rotation2D(rotationAngle - 180);
     }
 
     /// <summary>
@@ -219,8 +214,9 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// </summary>
     /// <param name="angle">Angle to average to</param>
     /// <param name="percent">Range from 0 to 1</param>
+    /// <returns>A new Rotation2D averaged toward the target angle</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public void AverageTo(double angle, double percent) {
+    public Rotation2D AverageTo(double angle, double percent) {
         if (percent < 0 || percent > 1) { throw new ArgumentOutOfRangeException(nameof(percent), "Percent must be between 0 and 1."); }
 
         double diff = angle - rotationAngle;
@@ -229,7 +225,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
         if (diff > 180 || diff < 0) { distance *= -1; }
 
         distance *= percent;
-        AdjustBy(distance);
+        return AdjustBy(distance);
     }
 
     /// <summary>
@@ -239,9 +235,10 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// </summary>
     /// <param name="other">Rotation to average to</param>
     /// <param name="percent">Range from 0 to 1</param>
+    /// <returns>A new Rotation2D averaged toward the target angle</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public void AverageTo(Rotation2D other, double percent) {
-        AverageTo(other.RotationAngle, percent);
+    public Rotation2D AverageTo(Rotation2D other, double percent) {
+        return AverageTo(other.RotationAngle, percent);
     }
 
     /// <summary>
@@ -250,19 +247,20 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// </summary>
     /// <param name="angle">Angle to move towards</param>
     /// <param name="maxAmount">Max amount of angle movement (must be positive)</param>
+    /// <returns>A new Rotation2D moved toward the target angle</returns>
     /// <exception cref="ArgumentOutOfRangeException" />
-    public void MoveTo(double angle, double maxAmount) {
+    public Rotation2D MoveTo(double angle, double maxAmount) {
         if (maxAmount <= 0) throw new ArgumentOutOfRangeException(nameof(maxAmount), "Max Amount must be a positive value");
 
         double distance = DistanceTo(angle, false);
 
         if (Math.Abs(distance) < maxAmount) {
-            rotationAngle = angle;
+            return new Rotation2D(angle);
         } else {
             if (distance > 0) {
-                RotationAngle += maxAmount;
+                return new Rotation2D(rotationAngle + maxAmount);
             } else {
-                RotationAngle -= maxAmount;
+                return new Rotation2D(rotationAngle - maxAmount);
             }
         }
     }
@@ -270,9 +268,10 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// <summary>
     /// <c>Rotation</c> passthrough for standard <see cref="MoveTo(double, double)"/> method.
     /// </summary>
+    /// <returns>A new Rotation2D moved toward the target angle</returns>
     /// <exception cref="ArgumentOutOfRangeException" />
-    public void MoveTo(Rotation2D angle, double maxAmount) {
-        MoveTo(angle.RotationAngle, maxAmount);
+    public Rotation2D MoveTo(Rotation2D angle, double maxAmount) {
+        return MoveTo(angle.RotationAngle, maxAmount);
     }
 
     /// <summary>
@@ -310,9 +309,7 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// Returns a rotation that was flipped on the X axis (shorthand).
     /// </summary>
     public static Rotation2D operator -(Rotation2D obj) {
-        Rotation2D r = new Rotation2D(obj);
-        r.FlipX();
-        return r;
+        return obj.FlipX();
     }
 
     /// <summary>
@@ -453,24 +450,23 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     /// <summary>
     /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Implementation.Equatable"]/*'/>
     /// </summary>
-    public bool Equals(Rotation2D? other) {
-        return rotationAngle == other?.rotationAngle;
+    public bool Equals(Rotation2D other) {
+        return rotationAngle == other.rotationAngle;
     }
 
     /// <summary>
     /// IComparable interface implementation. 
     /// </summary>
     /// <returns><include file="_SharedXML.xml" path='doc/member[@name="Phrases.Compare.Return"]/*'/></returns>
-    public int CompareTo(Rotation2D? other) {
-        if (other is null) return 1;
-        return RotationAngle.CompareTo(other.RotationAngle);
+    public int CompareTo(Rotation2D other) {
+        return rotationAngle.CompareTo(other.rotationAngle);
     }
 
     /// <summary>
-    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.Equals"]/*'/> <see cref="Equals(Rotation2D?)"/>.
+    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.Equals"]/*'/> <see cref="Equals(Rotation2D)"/>.
     /// </summary>
     public override bool Equals(object? obj) {
-        return base.Equals(obj);
+        return obj is Rotation2D other && Equals(other);
     }
 
     /// <summary>
@@ -490,17 +486,36 @@ public class Rotation2D : IEquatable<Rotation2D>, IComparable<Rotation2D> {
     #endregion
     #region Private methods
     /// <summary>
-    /// Used to define the coordinates each time the rotation is adjusted. 
+    /// Calculates rotation angle and coordinates from an angle in degrees.
+    /// Ensures the angle is in the valid range [0, 360) and computes unit circle coordinates.
     /// </summary>
-    private void AssignCoords() {
-        (double Sin, double Cos) = GetCoordinates(RotationRadian);
-        xCoord = Math.Round(Cos, 2);
-        yCoord = Math.Round(Sin, 2);
+    /// <param name="angle">Angle in degrees</param>
+    /// <returns>Tuple containing (normalizedAngle, xCoordinate, yCoordinate)</returns>
+    private static (double angle, double x, double y) CalculateRotationData(double angle) {
+        // Normalize angle to [0, 360)
+        double incomingValue = angle;
+        while (incomingValue < 0) {
+            incomingValue += 360;
+        }
+        double normalizedAngle = Math.Round(incomingValue % 360, 2);
+        
+        // Calculate radian and coordinates
+        double radian = Math.PI / 180 * normalizedAngle;
+        (double Sin, double Cos) = Math.SinCos(radian);
+        double x = Math.Round(Cos, 2);
+        double y = Math.Round(Sin, 2);
+        
+        return (normalizedAngle, x, y);
     }
 
-    private static (double Sin, double Cos) GetCoordinates(double radian) {
-        // I can dictionary this later
-        return Math.SinCos(radian);
+    /// <summary>
+    /// Creates a new Rotation2D from a radian value.
+    /// </summary>
+    /// <param name="radian">Angle in radians</param>
+    /// <returns>A new Rotation2D with the angle in degrees</returns>
+    private static Rotation2D FromRadian(double radian) {
+        double angle = radian / Math.PI * 180;
+        return new Rotation2D(angle);
     }
     #endregion
 }

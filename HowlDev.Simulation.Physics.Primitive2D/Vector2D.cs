@@ -67,7 +67,7 @@ public class Vector2D : IComparable<Vector2D>, IEquatable<Vector2D> {
     /// Assigns the <c>Rotation</c> and Velocity values to that point. 
     /// </summary>
     public void AssignToCoordinates(double x, double y) {
-        rotation.AssignToCoordinates(x, y);
+        rotation = Rotation2D.FromCoordinates(x, y);
         velocity = Math.Sqrt(Math.Pow(x, 2) + Math.Pow(y, 2));
     }
 

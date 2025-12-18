@@ -4,15 +4,13 @@ namespace HowlDev.Simulation.Physics.Primitive2D.Tests;
 public class RotationClassConstraintTests {
     [Test]
     public async Task RotationCanBeSet1() {
-        Rotation2D r = new Rotation2D();
-        r.RotationAngle = 25;
+        Rotation2D r = new Rotation2D(25);
         await Assert.That(r.RotationAngle).IsEqualTo(25);
     }
 
     [Test]
     public async Task RotationCanBeSet2() {
-        Rotation2D r = new Rotation2D();
-        r.RotationAngle = 25.352;
+        Rotation2D r = new Rotation2D(25.352);
         await Assert.That(r.RotationAngle).IsEqualTo(25.35);
     }
 
@@ -48,7 +46,7 @@ public class RotationClassConstraintTests {
     public async Task RotationCanBeAdjusted(
         double startingDegree, double adjustment, double outDegree) {
         Rotation2D r = new Rotation2D(startingDegree);
-        r.AdjustBy(adjustment);
+        r = r.AdjustBy(adjustment);
         await Assert.That(r.RotationAngle).IsEqualTo(outDegree);
     }
 
@@ -57,7 +55,7 @@ public class RotationClassConstraintTests {
         Rotation2D r1 = new Rotation2D(15);
         Rotation2D r2 = new Rotation2D(r1);
 
-        r2.RotationAngle = 25;
+        r2 = new Rotation2D(25);
         await Assert.That(r1.RotationAngle).IsEqualTo(15);
         await Assert.That(r2.RotationAngle).IsEqualTo(25);
     }
@@ -141,7 +139,7 @@ public class RotationClassXFlipTests {
     public async Task RotationCanBeXFlipped(
         double inDegree, double outDegree) {
         Rotation2D r = new Rotation2D(inDegree);
-        r.FlipX();
+        r = r.FlipX();
         await Assert.That(r.RotationAngle).IsEqualTo(outDegree);
     }
 }
@@ -165,7 +163,7 @@ public class RotationClassYFlipTests {
     public async Task RotationCanBeYFlipped(
         double inDegree, double outDegree) {
         Rotation2D r = new Rotation2D(inDegree);
-        r.FlipY();
+        r = r.FlipY();
         await Assert.That(r.RotationAngle).IsEqualTo(outDegree);
     }
 }
@@ -182,8 +180,8 @@ public class RotationClassDoubleFlipTests {
     public async Task RotationCanBeDoubleFlipped(
         double inDegree, double outDegree) {
         Rotation2D r = new Rotation2D(inDegree);
-        r.FlipY();
-        r.FlipX();
+        r = r.FlipY();
+        r = r.FlipX();
         await Assert.That(r.RotationAngle).IsEqualTo(outDegree);
     }
 
@@ -199,7 +197,7 @@ public class RotationClassDoubleFlipTests {
     public async Task RotationCanBeDoubleFlippedPart2(
         double inDegree, double outDegree) {
         Rotation2D r = new Rotation2D(inDegree);
-        r.DoubleFlip();
+        r = r.DoubleFlip();
         await Assert.That(r.RotationAngle).IsEqualTo(outDegree);
     }
 }
@@ -218,11 +216,10 @@ public class RotationClassAssignsToCoordinatesTests {
     [Arguments(-46.99, -54.87, 229.42)]
     public async Task RotationAngleFromCoordinatesWorks(
         double coordX, double coordY, double outAngle) {
-        Rotation2D r = new Rotation2D();
-        r.AssignToCoordinates(coordX, coordY);
+        Rotation2D r = Rotation2D.FromCoordinates(coordX, coordY);
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
 
-        r.AssignToCoordinates(new Point2D(coordX, coordY));
+        r = Rotation2D.FromCoordinates(new Point2D(coordX, coordY));
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
     }
 }
@@ -234,8 +231,7 @@ public class RotationClassAssignsto2PointCoordinateTests {
     [Arguments(0, 0, 10, -10, 315)]
     public async Task TwoPointSimpleCoordTests(
         double x1, double y1, double x2, double y2, double outAngle) {
-        Rotation2D r = new Rotation2D();
-        r.AssignToCoordinates(x1, y1, x2, y2);
+        Rotation2D r = Rotation2D.FromCoordinates(x1, y1, x2, y2);
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
     }
 
@@ -246,14 +242,13 @@ public class RotationClassAssignsto2PointCoordinateTests {
     [Arguments(83, -24, 0, 0, 163.87)]
     public async Task TwoPointComplexCoordTests(
     double x1, double y1, double x2, double y2, double outAngle) {
-        Rotation2D r = new Rotation2D();
-        r.AssignToCoordinates(x1, y1, x2, y2);
+        Rotation2D r = Rotation2D.FromCoordinates(x1, y1, x2, y2);
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
 
-        r.AssignToCoordinates(new Point2D(x1, y1), new Point2D(x2, y2));
+        r = Rotation2D.FromCoordinates(new Point2D(x1, y1), new Point2D(x2, y2));
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
 
-        r.AssignToCoordinates(new Line2D(x1, y1, x2, y2));
+        r = Rotation2D.FromCoordinates(new Line2D(x1, y1, x2, y2));
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
     }
 
@@ -264,8 +259,7 @@ public class RotationClassAssignsto2PointCoordinateTests {
     [Arguments(83, -24, 0, 0, 163.87)]
     public async Task TuplesCoordTest(
     double x1, double y1, double x2, double y2, double outAngle) {
-        Rotation2D r = new Rotation2D();
-        r.AssignToCoordinates((x1, y1), (x2, y2));
+        Rotation2D r = Rotation2D.FromCoordinates((x1, y1), (x2, y2));
         await Assert.That(r.RotationAngle).IsEqualTo(outAngle);
     }
 }
@@ -318,7 +312,7 @@ public class RotationClassAverageToTests {
         Rotation2D r1 = new Rotation2D(rot1);
         Rotation2D r2 = new Rotation2D(rot2);
 
-        r1.AverageTo(r2, percent);
+        r1 = r1.AverageTo(r2, percent);
         await Assert.That(r1.RotationAngle).IsEqualTo(outAngle);
         await Assert.That(r2.RotationAngle).IsEqualTo(rot2);
     }
@@ -332,7 +326,7 @@ public class RotationClassAverageToTests {
     int rot1, int rot2, double percent, int outAngle) {
         Rotation2D r1 = new Rotation2D(rot1);
 
-        r1.AverageTo(rot2, percent);
+        r1 = r1.AverageTo(rot2, percent);
         await Assert.That(r1.RotationAngle).IsEqualTo(outAngle);
     }
 
@@ -356,7 +350,7 @@ public class RotationClassAverageToTests {
         Rotation2D r1 = new Rotation2D(rot1);
         Rotation2D r2 = new Rotation2D(rot2);
 
-        r1.AverageTo(r2, percent);
+        r1 = r1.AverageTo(r2, percent);
         await Assert.That(r1.RotationAngle).IsEqualTo(outAngle);
         await Assert.That(r2.RotationAngle).IsEqualTo(rot2);
     }
@@ -389,7 +383,7 @@ public class RotationClassMoveToTests {
         Rotation2D r1 = new Rotation2D(start);
         Rotation2D r2 = new Rotation2D(end);
 
-        r1.MoveTo(r2, 5);
+        r1 = r1.MoveTo(r2, 5);
         await Assert.That(r1.RotationAngle).IsEqualTo(expected);
     }
 
@@ -408,7 +402,7 @@ public class RotationClassMoveToTests {
     double start, double end, double movingDistance, double expected) {
         Rotation2D r1 = new Rotation2D(start);
 
-        r1.MoveTo(end, movingDistance);
+        r1 = r1.MoveTo(end, movingDistance);
         await Assert.That(r1.RotationAngle).IsEqualTo(expected);
     }
 }
@@ -530,9 +524,8 @@ public class RotationClassSmallTests {
         await Assert.That(rot1.Coords.X).IsEqualTo(0.71);
 
         Rotation2D a1 = -rot1;
-        rot1.FlipX();
-        await Assert.That(a1 == rot1).IsTrue();
-        rot1.FlipX();
+        Rotation2D flippedRot1 = rot1.FlipX();
+        await Assert.That(a1 == flippedRot1).IsTrue();
 
         a1++;
         await Assert.That(a1.RotationAngle).IsEqualTo(316);
@@ -554,7 +547,7 @@ public class RotationClassSmallTests {
         if (a1) { // continue
         } else { throw new Exception("a1 is not true"); }
 
-        a1.RotationAngle = 0;
+        a1 = new Rotation2D(0);
 
         if (!a1) { // continue
         } else { throw new Exception("a1 is not false"); }

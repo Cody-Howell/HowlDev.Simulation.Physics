@@ -186,9 +186,7 @@ public class Point2D : IEquatable<Point2D>, IComparable<Point2D> {
     /// Gets the angle from the left point to the right point. 
     /// </summary>
     public static Rotation2D operator ^(Point2D left, Point2D right) {
-        Rotation2D r = new Rotation2D();
-        r.AssignToCoordinates(left.Pair, right.Pair);
-        return r;
+        return Rotation2D.FromCoordinates(left.Pair, right.Pair);
     }
 
     /// <summary>
