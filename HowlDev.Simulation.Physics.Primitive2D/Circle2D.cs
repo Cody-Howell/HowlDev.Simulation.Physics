@@ -8,6 +8,7 @@ namespace HowlDev.Simulation.Physics.Primitive2D;
 public class Circle2D : IEquatable<Circle2D>, IComparable<Circle2D> {
     private Point2D center;
     private double radius;
+
     #region Properties
     public Point2D Center {
         get { return center; } 
@@ -31,7 +32,7 @@ public class Circle2D : IEquatable<Circle2D>, IComparable<Circle2D> {
     #region Custom Operators
 
     #endregion
-#region Default Overrides
+    #region Default Overrides
     /// <summary>
     /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Implementation.Equatable"]/*'/>
     /// </summary>
@@ -70,7 +71,6 @@ public class Circle2D : IEquatable<Circle2D>, IComparable<Circle2D> {
     /// <summary>
     /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.ToString"]/*'/> "Angle: {rotationAngle}".
     /// </summary>
-    /// <returns></returns>
     public override string ToString() {
         return $"Center: {center}, Radius: {radius}";
     }
