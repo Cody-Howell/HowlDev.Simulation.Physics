@@ -336,7 +336,7 @@ public readonly struct Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumer
     /// Combines the hash codes of the two <c>Point</c>s in this line. 
     /// </summary>
     public override int GetHashCode() {
-        return point0.GetHashCode() + point1.GetHashCode();
+        return HashCode.Combine(point0.GetHashCode(), point1.GetHashCode());
     }
 
     /// <summary>

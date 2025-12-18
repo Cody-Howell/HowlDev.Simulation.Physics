@@ -293,7 +293,7 @@ public readonly struct Equation2D : IEquatable<Equation2D>, IComparable<Equation
     /// Returns the summed and weighted hash of the two coefficients.
     /// </summary>
     public override int GetHashCode() {
-        return coefficient0.GetHashCode() + coefficient1.GetHashCode() * 2;
+        return HashCode.Combine(coefficient0.GetHashCode(), coefficient1.GetHashCode());
     }
 
     /// <summary>

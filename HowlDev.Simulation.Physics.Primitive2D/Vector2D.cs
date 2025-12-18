@@ -160,7 +160,7 @@ public readonly struct Vector2D : IComparable<Vector2D>, IEquatable<Vector2D> {
     /// Combines the hash codes of the Rotation and Velocity values. 
     /// </summary>
     public override int GetHashCode() {
-        return rotation.GetHashCode() + velocity.GetHashCode();
+        return HashCode.Combine(rotation.GetHashCode(), velocity.GetHashCode());
     }
 
     /// <summary>

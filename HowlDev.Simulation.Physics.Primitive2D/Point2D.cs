@@ -208,7 +208,7 @@ public readonly struct Point2D : IEquatable<Point2D>, IComparable<Point2D> {
     /// Get the combined hash code of the two points on the plane. 
     /// </summary>
     public override int GetHashCode() {
-        return x.GetHashCode() + y.GetHashCode();
+        return HashCode.Combine(x.GetHashCode(), y.GetHashCode());
     }
 
     /// <summary>
