@@ -8,8 +8,8 @@ public class LineClassBasicTests {
         Line2D l2 = new Line2D([1, 2, 3, 4]);
         Line2D l3 = new Line2D(l2);
 
-        l3.UpdatePoint(0, 0, 2);
-        l3.UpdatePoint(1, new Point2D(5, 6));
+        l3 = l3.WithPoint(0, 0, 2);
+        l3 = l3.WithPoint(1, new Point2D(5, 6));
         await Assert.That(l2[0].X).IsEqualTo(1);
         await Assert.That(l3.Points[0]).IsEqualTo(new Point2D(0, 2));
         await Assert.That(l3.Points[1]).IsEqualTo(new Point2D(5, 6));

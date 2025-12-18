@@ -7,63 +7,64 @@ namespace HowlDev.Simulation.Physics.Primitive2D;
 /// handle line crosses and endpoint equivalence, get the max and min, and many methods the <c>Point</c>s contained 
 /// are passed through.
 /// </summary>
-public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point2D> {
-    private Point2D[] points = new Point2D[2];
+public readonly struct Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point2D> {
+    private readonly Point2D point0;
+    private readonly Point2D point1;
 
     /// <summary>
     /// Returns the minimum X value of the two <c>Point</c>s. 
     /// </summary>
-    public double MinX { get { return Math.Min(points[0].X, points[1].X); } }
+    public double MinX { get { return Math.Min(point0.X, point1.X); } }
 
     /// <summary>
     /// Returns the maximum X value of the two <c>Point</c>s. 
     /// </summary>
-    public double MaxX { get { return Math.Max(points[0].X, points[1].X); } }
+    public double MaxX { get { return Math.Max(point0.X, point1.X); } }
 
     /// <summary>
     /// Returns the minimum Y value of the two <c>Point</c>s. 
     /// </summary>
-    public double MinY { get { return Math.Min(points[0].Y, points[1].Y); } }
+    public double MinY { get { return Math.Min(point0.Y, point1.Y); } }
 
     /// <summary>
     /// Returns the maximum Y value of the two <c>Point</c>s. 
     /// </summary>
-    public double MaxY { get { return Math.Max(points[0].Y, points[1].Y); } }
+    public double MaxY { get { return Math.Max(point0.Y, point1.Y); } }
 
     /// <summary>
     /// Gets the length of the line.
     /// </summary>
-    public double Length { get { return points[0].GetDistance(points[1]); } }
+    public double Length { get { return point0.GetDistance(point1); } }
 
     /// <summary>
     /// Gets the midpoint of the line. 
     /// </summary>
-    public Point2D Midpoint { get { return points[0].GetMidpoint(points[1]); } }
+    public Point2D Midpoint { get { return point0.GetMidpoint(point1); } }
 
     /// <summary>
     /// Gets the angle from the first point to the second point.
     /// </summary>
-    public Rotation2D Angle { get { return points[0] ^ points[1]; } }
+    public Rotation2D Angle { get { return point0 ^ point1; } }
 
     /// <summary>
     /// An array of length 2 holding both points. 
     /// </summary>
-    public Point2D[] Points { get { return points; } }
+    public Point2D[] Points { get { return [point0, point1]; } }
 
     /// <summary>
     /// Default constructor. Creates two points at the origin. 
     /// </summary>
     public Line2D() {
-        points[0] = new Point2D();
-        points[1] = new Point2D();
+        point0 = new Point2D();
+        point1 = new Point2D();
     }
 
     /// <summary>
     /// Takes in two coordinate pairs and assigns them in order.
     /// </summary>
     public Line2D(double x1, double y1, double x2, double y2) {
-        points[0] = new Point2D(x1, y1);
-        points[1] = new Point2D(x2, y2);
+        point0 = new Point2D(x1, y1);
+        point1 = new Point2D(x2, y2);
     }
 
     /// <summary>
@@ -75,51 +76,52 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     public Line2D(double[] incomingPoints) {
         if (incomingPoints.Length != 4) throw new ArgumentException("Array length must be equal to 4.");
 
-        points[0] = new Point2D(incomingPoints[0], incomingPoints[1]);
-        points[1] = new Point2D(incomingPoints[2], incomingPoints[3]);
+        point0 = new Point2D(incomingPoints[0], incomingPoints[1]);
+        point1 = new Point2D(incomingPoints[2], incomingPoints[3]);
     }
 
     /// <summary>
     /// Takes in 2 <c>Point</c>s and assigns them to the array. Copies reference directly.
     /// </summary>
     public Line2D(Point2D p1, Point2D p2) {
-        points[0] = p1;
-        points[1] = p2;
+        point0 = p1;
+        point1 = p2;
     }
 
     /// <summary>
     /// Duplicates a Line. Points inside are duplicated as well.
     /// </summary>
     public Line2D(Line2D line) {
-        points[0] = new Point2D(line.Points[0]);
-        points[1] = new Point2D(line.Points[1]);
+        point0 = new Point2D(line.point0);
+        point1 = new Point2D(line.point1);
     }
 
     /// <summary>
     /// Index into the inner array directly.
     /// </summary>
-    public Point2D this[int i] => points[i];
+    public Point2D this[int i] => i == 0 ? point0 : point1;
 
     /// <summary>
-    /// Updates the <c>Point</c> at the given index with a new reference. 
+    /// Returns a new <c>Line</c> with the <c>Point</c> at the given index updated. 
     /// </summary>
     /// <param name="index">Index of the array (either 0 or 1)</param>
     /// <param name="x">X-coordinate of the new <c>Point</c></param>
     /// <param name="y">Y-coordinate of the new <c>Point</c></param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public void UpdatePoint(int index, double x, double y) {
-        if (index < 0 || index >= points.Length) throw new ArgumentOutOfRangeException(nameof(index), "Index must be between 0 and 1.");
-        points[index] = new Point2D(x, y);
+    public Line2D WithPoint(int index, double x, double y) {
+        if (index < 0 || index > 1) throw new ArgumentOutOfRangeException(nameof(index), "Index must be between 0 and 1.");
+        if (index == 0) return new Line2D(new Point2D(x, y), point1);
+        return new Line2D(point0, new Point2D(x, y));
     }
 
     /// <summary>
-    /// Updates the <c>Point</c> at the given index with a new reference. 
+    /// Returns a new <c>Line</c> with the <c>Point</c> at the given index updated. 
     /// </summary>
     /// <param name="index">Index of the array (either 0 or 1)</param>
     /// <param name="p"><c>Point</c> to be duplicated and updated into the array</param>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public void UpdatePoint(int index, Point2D p) {
-        UpdatePoint(index, p.X, p.Y);
+    public Line2D WithPoint(int index, Point2D p) {
+        return WithPoint(index, p.X, p.Y);
     }
 
     /// <summary>
@@ -130,8 +132,8 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     public bool IsIntersecting(Line2D l1) {
         if (ContainsEndpoint(l1)) return true;
         // Provided by ChatGPT
-        double dx1 = points[1].X - points[0].X;
-        double dy1 = points[1].Y - points[0].Y;
+        double dx1 = point1.X - point0.X;
+        double dy1 = point1.Y - point0.Y;
         double dx2 = l1[1].X - l1[0].X;
         double dy2 = l1[1].Y - l1[0].Y;
 
@@ -140,8 +142,8 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
             return false;
         }
 
-        double dx3 = l1[0].X - points[0].X;
-        double dy3 = l1[0].Y - points[0].Y;
+        double dx3 = l1[0].X - point0.X;
+        double dy3 = l1[0].Y - point0.Y;
 
         double t = (dx3 * dy2 - dy3 * dx2) / denominator;
         double u = (dx3 * dy1 - dy3 * dx1) / denominator;
@@ -179,7 +181,7 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     /// </summary>
     /// <param name="p"><c>Point</c> to compare with.</param>
     public bool ContainsEndpoint(Point2D p) {
-        return points[0].Equals(p) || points[1].Equals(p);
+        return point0.Equals(p) || point1.Equals(p);
     }
 
     /// <summary>
@@ -294,22 +296,18 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     /// <summary>
     /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Implementation.Equatable"]/*'/>
     /// </summary>
-    public bool Equals(Line2D? other) {
-        if (other is null) return false;
-
-        return points[0] == other.Points[0] && points[1] == other.Points[1];
+    public bool Equals(Line2D other) {
+        return point0 == other.point0 && point1 == other.point1;
     }
 
     /// <summary>
     /// Sorts by point 1, then point 2.
     /// </summary>
     /// <returns><include file="_SharedXML.xml" path='doc/member[@name="Phrases.Compare.Return"]/*'/></returns>
-    public int CompareTo(Line2D? other) {
-        if (other is null) return 0;
-
-        int value = points[0].CompareTo(other.Points[0]);
+    public int CompareTo(Line2D other) {
+        int value = point0.CompareTo(other.point0);
         if (value == 0) {
-            return points[1].CompareTo(other.Points[1]);
+            return point1.CompareTo(other.point1);
         }
         return value;
     }
@@ -319,8 +317,8 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     /// </summary>
     /// <returns><c>Point</c> 1 and 2</returns>
     public IEnumerator<Point2D> GetEnumerator() {
-        yield return points[0];
-        yield return points[1];
+        yield return point0;
+        yield return point1;
     }
 
     IEnumerator IEnumerable.GetEnumerator() {
@@ -328,7 +326,7 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     }
 
     /// <summary>
-    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.Equals"]/*'/> <see cref="Equals(Line2D?)"/>.
+    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.Equals"]/*'/> <see cref="Equals(Line2D)"/>.
     /// </summary>
     public override bool Equals(object? obj) {
         return base.Equals(obj);
@@ -338,13 +336,13 @@ public class Line2D : IComparable<Line2D>, IEquatable<Line2D>, IEnumerable<Point
     /// Combines the hash codes of the two <c>Point</c>s in this line. 
     /// </summary>
     public override int GetHashCode() {
-        return points[0].GetHashCode() + points[1].GetHashCode();
+        return point0.GetHashCode() + point1.GetHashCode();
     }
 
     /// <summary>
-    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.ToString"]/*'/> "({points[0]}), ({points[1]})". 
+    /// <include file="_SharedXML.xml" path='doc/member[@name="Phrases.Overriden.ToString"]/*'/> "({point0}), ({point1})". 
     /// </summary>
     public override string ToString() {
-        return $"({points[0]}), ({points[1]})";
+        return $"({point0}), ({point1})";
     }
 }
