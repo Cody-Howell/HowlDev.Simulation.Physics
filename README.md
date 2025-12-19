@@ -32,6 +32,11 @@ Read the wiki (which has links to the package) and get a bunch of class definiti
 
 # Changelog
 
+0.8.2 (12/19/25)
+
+- Vector2D has some additional operators that I hope will be useful in making my game easier. 
+    - *, /, and the unary - operator (to flip it immediately). 
+
 0.8.1 (12/19/25)
 
 - Circle2D now has methods to change one property and leave the rest.
