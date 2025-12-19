@@ -67,6 +67,20 @@ public readonly struct Circle2D : IEquatable<Circle2D>, IComparable<Circle2D> {
     public bool Contains(Point2D point) {
         return center.GetDistance(point) <= radius;
     }
+
+    /// <summary>
+    /// Returns a new Circle object with a given centerpoint.
+    /// </summary>
+    public Circle2D WithNewCenter(Point2D point) {
+        return new Circle2D(point, radius);
+    }
+
+    /// <summary>
+    /// Returns a new Circle object with a given radius.
+    /// </summary>
+    public Circle2D WithNewRadius(double radius) {
+        return new Circle2D(center, radius);
+    }
     #endregion
     #region Operators
     /// <summary/>

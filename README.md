@@ -32,6 +32,10 @@ Read the wiki (which has links to the package) and get a bunch of class definiti
 
 # Changelog
 
+0.8.1 (12/19/25)
+
+- Circle2D now has methods to change one property and leave the rest.
+
 0.8 (12/19/25)
 
 - BREAKING CHANGE
