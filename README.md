@@ -36,6 +36,7 @@ Read the wiki (which has links to the package) and get a bunch of class definiti
 
 - Vector2D has some additional operators that I hope will be useful in making my game easier. 
     - *, /, and the unary - operator (to flip it immediately). 
+- Point2D now has as vector-getter from one point to another. (this -> parameter)
 
 0.8.1 (12/19/25)
 
