@@ -101,6 +101,27 @@ public readonly struct Vector2D : IComparable<Vector2D>, IEquatable<Vector2D> {
     }
 
     /// <summary>
+    /// Inverts the internal rotation value 180 degrees to go in the opposite direction, keeping the same velocity. 
+    /// </summary>
+    public static Vector2D operator -(Vector2D vec) {
+        return new Vector2D(vec.rotation.DoubleFlip(), vec.velocity);
+    }
+
+    /// <summary>
+    /// Applies the multiplication to the velocity, i.e. velocity * value
+    /// </summary>
+    public static Vector2D operator *(Vector2D momentum, double value) {
+        return new Vector2D(momentum.Rotation, momentum.velocity * value);
+    }
+
+    /// <summary>
+    /// Applies the division to the velocity, i.e. velocity / value
+    /// </summary>
+    public static Vector2D operator /(Vector2D momentum, double value) {
+        return new Vector2D(momentum.Rotation, momentum.velocity / value);
+    }
+
+    /// <summary>
     /// Adds a given <c>Point</c> with the rotation value scaled by the velocity value. Returns a new reference.
     /// </summary>
     public static Point2D operator +(Point2D point, Vector2D momentum) {
