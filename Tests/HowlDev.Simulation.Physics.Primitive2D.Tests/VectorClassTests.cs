@@ -93,6 +93,60 @@ public class VectorClassOperatorTests {
         await Assert.That(Math.Abs(answer.X - answerX)).IsLessThanOrEqualTo(0.1);
         await Assert.That(Math.Abs(answer.Y - answerY)).IsLessThanOrEqualTo(0.1);
     }
+
+    [Test]
+    [Arguments(0, 5.0, 180, 5.0)]
+    [Arguments(45, 3.5, 225, 3.5)]
+    [Arguments(90, 2.0, 270, 2.0)]
+    [Arguments(135, 1.5, 315, 1.5)]
+    [Arguments(180, 4.2, 0, 4.2)]
+    [Arguments(270, 3.0, 90, 3.0)]
+    [Arguments(315, 2.8, 135, 2.8)]
+    [Arguments(359, 1.0, 179, 1.0)]
+    public async Task UnaryNegationOperator(
+        int rotAngle, double velocity, int expectedRotation, double expectedVelocity) {
+        Vector2D original = new Vector2D(rotAngle, velocity);
+        Vector2D negated = -original;
+
+        await Assert.That(negated.Rotation.RotationAngle).IsEqualTo(expectedRotation);
+        await Assert.That(negated.Velocity).IsEqualTo(expectedVelocity);
+    }
+
+    [Test]
+    [Arguments(45, 2.0, 2.0, 4.0)]
+    [Arguments(90, 3.5, 0.5, 1.75)]
+    [Arguments(180, 1.0, 10.0, 10.0)]
+    [Arguments(270, 5.0, 0.0, 0.0)]
+    [Arguments(0, 7.5, 1.0, 7.5)]
+    [Arguments(135, 4.0, -2.0, -8.0)]
+    [Arguments(225, 2.5, -1.5, -3.75)]
+    [Arguments(315, 6.0, 0.25, 1.5)]
+    public async Task MultiplicationOperator(
+        int rotAngle, double velocity, double multiplier, double expectedVelocity) {
+        Vector2D original = new Vector2D(rotAngle, velocity);
+        Vector2D multiplied = original * multiplier;
+
+        await Assert.That(multiplied.Rotation.RotationAngle).IsEqualTo(rotAngle);
+        await Assert.That(multiplied.Velocity).IsEqualTo(expectedVelocity);
+    }
+
+    [Test]
+    [Arguments(45, 10.0, 2.0, 5.0)]
+    [Arguments(90, 8.0, 4.0, 2.0)]
+    [Arguments(180, 15.0, 3.0, 5.0)]
+    [Arguments(270, 7.5, 2.5, 3.0)]
+    [Arguments(0, 100.0, 10.0, 10.0)]
+    [Arguments(135, 6.0, 1.5, 4.0)]
+    [Arguments(225, 5.0, 0.5, 10.0)]
+    [Arguments(315, 3.6, 1.2, 3.0)]
+    public async Task DivisionOperator(
+        int rotAngle, double velocity, double divisor, double expectedVelocity) {
+        Vector2D original = new Vector2D(rotAngle, velocity);
+        Vector2D divided = original / divisor;
+
+        await Assert.That(divided.Rotation.RotationAngle).IsEqualTo(rotAngle);
+        await Assert.That(divided.Velocity).IsEqualTo(expectedVelocity);
+    }
 }
 public class VectorClassComparisonTests {
     [Test]
